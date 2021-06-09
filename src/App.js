@@ -1,14 +1,5 @@
 import React, { useState } from "react";
 
-import Email from "./assets/email.svg";
-import Instagram from "./assets/instagram.svg";
-import Oneroute from "./assets/oneroute.svg";
-import Sms from "./assets/sms.svg";
-import Twitter from "./assets/twitter.svg";
-import Whatsapp from "./assets/whatsapp.svg";
-import OnerouteW from "./assets/oneroute-w.svg";
-import Close from "./assets/close.svg";
-
 import "./App.css";
 
 function App({ domElement }) {
@@ -25,17 +16,17 @@ function App({ domElement }) {
   const getChannelIcon = (channel) => {
     switch (channel.toLowerCase()) {
       case "email":
-        return Email;
+        return "https://s3.eu-west-3.amazonaws.com/oneroute.asb.ng/email.svg";
       case "instagram":
-        return Instagram;
+        return "https://s3.eu-west-3.amazonaws.com/oneroute.asb.ng/instagram.svg";
       case "oneroute":
-        return Oneroute;
+        return "https://s3.eu-west-3.amazonaws.com/oneroute.asb.ng/oneroute.svg";
       case "sms":
-        return Sms;
+        return "https://s3.eu-west-3.amazonaws.com/oneroute.asb.ng/sms.svg";
       case "twitter":
-        return Twitter;
+        return "https://s3.eu-west-3.amazonaws.com/oneroute.asb.ng/twitter.svg";
       case "whatsapp":
-        return Whatsapp;
+        return "https://s3.eu-west-3.amazonaws.com/oneroute.asb.ng/whatsapp.svg";
       case "default":
         return;
     }
@@ -84,7 +75,10 @@ function App({ domElement }) {
           <div className="bottom_section">
             <div className="channels">
               <div className="item">
-                <img src={Oneroute} alt="" />
+                <img
+                  src="https://s3.eu-west-3.amazonaws.com/oneroute.asb.ng/oneroute.svg"
+                  alt=""
+                />
                 <span>OneRoute Webchat (coming soon)</span>
               </div>
               {channels?.map(({ name, to }, i) => (
@@ -102,7 +96,10 @@ function App({ domElement }) {
             </div>
 
             <div className="footer">
-              <img src={Oneroute} alt="" />{" "}
+              <img
+                src="https://s3.eu-west-3.amazonaws.com/oneroute.asb.ng/oneroute.svg"
+                alt=""
+              />{" "}
               <span>
                 Powered by{" "}
                 <a
@@ -130,10 +127,13 @@ function App({ domElement }) {
           style={{ backgroundColor: hexcolor || "#000" }}
         >
           {isWidgetOpen ? (
-            <img src={Close} alt="" />
+            <img
+              src="https://s3.eu-west-3.amazonaws.com/oneroute.asb.ng/close.svg"
+              alt=""
+            />
           ) : (
             <img
-              src={OnerouteW}
+              src="https://s3.eu-west-3.amazonaws.com/oneroute.asb.ng/oneroute-w.svg"
               className={!isWidgetOpen ? "closed" : ""}
               alt=""
             />
