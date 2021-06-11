@@ -57,6 +57,7 @@ span {
   margin-bottom: 24px;
   width: 48px;
   height: 48px;
+  object-fit: cover;
 }
 
 .oneroute_widget .top_section h3 {
