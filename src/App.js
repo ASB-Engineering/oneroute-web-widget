@@ -116,10 +116,7 @@ function App({ domElement }) {
           </div>
         </div>
       )}
-      <div
-        className="trigger_container"
-        onClick={() => setIsWidgetOpen(!isWidgetOpen)}
-      >
+      <div className="trigger_container">
         <div className={`tooltip ${isWidgetOpen ? "none" : ""}`}>
           {tooltip}
           <span></span>
@@ -127,6 +124,7 @@ function App({ domElement }) {
         <div
           className="trigger_btn"
           style={{ backgroundColor: hexcolor || "#000" }}
+          onClick={() => setIsWidgetOpen(!isWidgetOpen)}
         >
           {isWidgetOpen ? (
             <img
