@@ -19,6 +19,8 @@ function App({ domElement }) {
         return "https://s3.eu-west-3.amazonaws.com/oneroute.asb.ng/email.svg";
       case "instagram":
         return "https://s3.eu-west-3.amazonaws.com/oneroute.asb.ng/instagram.svg";
+      case "facebook":
+        return "https://s3.eu-west-3.amazonaws.com/oneroute.asb.ng/facebook.svg";
       case "oneroute":
         return "https://s3.eu-west-3.amazonaws.com/oneroute.asb.ng/oneroute.svg";
       case "sms":
@@ -27,7 +29,7 @@ function App({ domElement }) {
         return "https://s3.eu-west-3.amazonaws.com/oneroute.asb.ng/twitter.svg";
       case "whatsapp":
         return "https://s3.eu-west-3.amazonaws.com/oneroute.asb.ng/whatsapp.svg";
-      case "default":
+      default:
         return;
     }
   };
