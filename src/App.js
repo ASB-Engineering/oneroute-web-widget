@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 import "./App.css";
 
@@ -13,6 +13,13 @@ function App({ domElement }) {
 
   const [isWidgetOpen, setIsWidgetOpen] = useState(false);
   const [isWidgetTooltipOpen, setIsWidgetTooltipOpen] = useState(true);
+
+  useEffect(() => {
+    if (!isWidgetOpen) {
+      setIsWidgetTooltipOpen(true);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isWidgetOpen]);
 
   const getChannelIcon = (channel) => {
     switch (channel.toLowerCase()) {
