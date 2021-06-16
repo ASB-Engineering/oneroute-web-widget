@@ -92,7 +92,7 @@ function App({ domElement }) {
                   className="item"
                 >
                   <img src={getChannelIcon(name)} alt="" />
-                  <span>Open {name}</span>
+                  <span>{name}</span>
                 </a>
               ))}
             </div>
