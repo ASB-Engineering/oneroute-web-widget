@@ -107,7 +107,7 @@ span {
   border-radius: 25px 4px 4px 4px;
   cursor: pointer;
 }
-.oneroute_widget .bottom_section .channels .item:first-child {
+.oneroute_widget .bottom_section .channels .item.first {
   cursor: text;
 }
 
@@ -116,7 +116,7 @@ span {
   width: 24px;
   height: 24px;
 }
-.oneroute_widget .bottom_section .channels .item:first-child img {
+.oneroute_widget .bottom_section .channels .item.first img {
   opacity: 0.5;
 }
 
@@ -127,7 +127,7 @@ span {
   font-size: 14px;
   color: #474f58;
 }
-.oneroute_widget .bottom_section .channels .item:first-child span {
+.oneroute_widget .bottom_section .channels .item.first span {
   opacity: 0.5;
 }
 
@@ -195,6 +195,17 @@ span {
   border-right: 1px solid #efefef;
   right: -8px;
   transform: rotate(45deg);
+}
+
+.oneroute_widget .trigger_container .tooltip img {
+  position: absolute;
+  top: -7px;
+  right: -7px;
+  width: 19px;
+  height: 19px;
+  border-radius: 50%;
+  border: 1px solid #efefef;
+  cursor: pointer;
 }
 
 .oneroute_widget .trigger_container .trigger_btn {

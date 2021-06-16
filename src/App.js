@@ -12,6 +12,7 @@ function App({ domElement }) {
   channels = JSON.parse(channels);
 
   const [isWidgetOpen, setIsWidgetOpen] = useState(false);
+  const [isWidgetTooltipOpen, setIsWidgetTooltipOpen] = useState(true);
 
   const getChannelIcon = (channel) => {
     switch (channel.toLowerCase()) {
@@ -76,13 +77,13 @@ function App({ domElement }) {
           </div>
           <div className="bottom_section">
             <div className="channels">
-              <div className="item">
+              {/* <div className="item first">
                 <img
                   src="https://s3.eu-west-3.amazonaws.com/oneroute.asb.ng/oneroute.svg"
                   alt=""
                 />
                 <span>OneRoute Webchat (coming soon)</span>
-              </div>
+              </div> */}
               {channels?.map(({ name, to }, i) => (
                 <a
                   key={i}
@@ -117,10 +118,17 @@ function App({ domElement }) {
         </div>
       )}
       <div className="trigger_container">
-        <div className={`tooltip ${isWidgetOpen ? "none" : ""}`}>
-          {tooltip}
-          <span></span>
-        </div>
+        {isWidgetTooltipOpen && (
+          <div className={`tooltip ${isWidgetOpen ? "none" : ""}`}>
+            {tooltip}
+            <span></span>
+            <img
+              src="https://s3.eu-west-3.amazonaws.com/oneroute.asb.ng/close.svg"
+              alt=""
+              onClick={() => setIsWidgetTooltipOpen(false)}
+            />
+          </div>
+        )}
         <div
           className="trigger_btn"
           style={{ backgroundColor: hexcolor || "#000" }}
