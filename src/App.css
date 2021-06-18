@@ -206,7 +206,12 @@ span {
   border-radius: 50%;
   border: 1px solid #efefef;
   cursor: pointer;
-  opacity: 0.7;
+  opacity: 1;
+  display: none;
+}
+
+.oneroute_widget .trigger_container .tooltip:hover img {
+  display: block;
 }
 
 .oneroute_widget .trigger_container .trigger_btn {
