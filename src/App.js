@@ -34,7 +34,7 @@ function App({ domElement }) {
 
   const { messages } = useChat(conversation_id); // Creates a websocket and manages messaging
 
-  console.log(messages, "messages");
+  console.log(messages, "message");
 
   useEffect(() => {
     if (conversation_id) {
