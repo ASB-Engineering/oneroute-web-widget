@@ -4,6 +4,8 @@ import useChat from "./useChat";
 
 import { formatTime, getRequestError } from "./functions";
 
+import "regenerator-runtime/runtime";
+
 import "./App.css";
 
 function App({ domElement }) {
