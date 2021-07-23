@@ -2,8 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 
 import useChat from "./useChat";
 
-import { getRequest, postRequest } from "./api/index";
-import { formatTime, getRequestError } from "./api/functions";
+import { formatTime, getRequestError } from "./functions";
 
 import "./App.css";
 
@@ -25,6 +24,8 @@ function App({ domElement }) {
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
+
+  const baseURL = "https://oneroute-backend.herokuapp.com/api";
 
   const liveChatCredentials = channels?.find(
     (x) => x?.name?.toLowerCase() === "livechat"
@@ -131,14 +132,14 @@ function App({ domElement }) {
 
   const getConversation = async (load) => {
     load && setIsLoading(true);
-    try {
-      const res = await getRequest({
-        url: `/conversations/${conversation_id}`,
-      });
 
-      const success = res?.data?.success;
+    try {
+      let response = await fetch(`${baseURL}/conversations/${conversation_id}`);
+      const res = await response.json();
+
+      const success = res?.success;
       if (success === true) {
-        const convo = res?.data?.data;
+        const convo = res?.data;
         setFormData({
           email: convo?.customer?.email,
           name: convo?.customer?.name,
@@ -162,26 +163,30 @@ function App({ domElement }) {
     if (formData?.message?.text?.length > 0) {
       setIsSubmitting(true);
       try {
-        const res = await postRequest({
-          url: `/conversations/incoming-messages/widget/${liveChatCredentials?.to}`,
-          data: {
-            email: formData?.email,
-            name: formData?.name,
-            message: formData?.message,
-          },
-        });
+        let response = await fetch(
+          `${baseURL}/conversations/incoming-messages/widget/${liveChatCredentials?.to}`,
+          {
+            method: "POST",
+            body: JSON.stringify({
+              email: formData?.email,
+              name: formData?.name,
+              message: formData?.message,
+            }),
+            headers: {
+              "Content-type": "application/json; charset=UTF-8",
+            },
+          }
+        );
+        const res = await response.json();
 
-        const success = res?.data?.success;
+        const success = res?.success;
         if (success === true) {
           setFormData({
             ...formData,
             message: "",
           });
-          localStorage.setItem(
-            "conversation_id",
-            res?.data?.data?.conversation_id
-          );
-          setConversationData([...conversationData, res?.data?.data]);
+          localStorage.setItem("conversation_id", res?.data?.conversation_id);
+          setConversationData([...conversationData, res?.data]);
           setIsSubmitting(false);
           setIsSignUpFormOpen(false);
         }
@@ -207,29 +212,29 @@ function App({ domElement }) {
 
       var fileData = new FormData();
       fileData.append("media", fileToUpload);
-      let payload = {};
-      payload = fileData;
 
       try {
-        const res = await postRequest({
-          url: "/utils/upload",
-          data: payload,
+        let response = await fetch(`${baseURL}/utils/upload`, {
+          method: "POST",
+          body: fileData,
         });
-        if (res?.status === 200) {
+        const res = await response.json();
+
+        if (res?.success === true) {
           setFormData({
             ...formData,
             message: {
               ...formData?.message,
               attachment: {
-                url: res?.data?.data,
+                url: res?.data,
                 type: "IMAGE",
               },
             },
           });
           setIsLoading(false);
         }
-      } catch (error) {
-        const errorMessage = getRequestError(error);
+      } catch (err) {
+        const errorMessage = getRequestError(err);
         setErrorMsg(errorMessage);
         setIsLoading(false);
       }
@@ -250,16 +255,23 @@ function App({ domElement }) {
       setIsSubmitting(true);
 
       try {
-        const res = await postRequest({
-          url: `/conversations/incoming-messages/widget/${liveChatCredentials?.to}`,
-          data: {
-            email: formData?.email,
-            name: formData?.name,
-            message: formData?.message,
-          },
-        });
+        let response = await fetch(
+          `${baseURL}/conversations/incoming-messages/widget/${liveChatCredentials?.to}`,
+          {
+            method: "POST",
+            body: JSON.stringify({
+              email: formData?.email,
+              name: formData?.name,
+              message: formData?.message,
+            }),
+            headers: {
+              "Content-type": "application/json; charset=UTF-8",
+            },
+          }
+        );
+        const res = await response.json();
 
-        const success = res?.data?.success;
+        const success = res?.success;
         if (success === true) {
           setFormData({
             ...formData,
