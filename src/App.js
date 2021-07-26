@@ -1,31 +1,30 @@
 import React, { useState, useEffect, useRef } from "react";
 
-import useChat from "./useChat";
-
 import { formatTime, getRequestError } from "./functions";
 
 import "regenerator-runtime/runtime";
 
 import "./App.css";
 
-function App({ domElement }) {
-  var hexcolor = domElement.getAttribute("data-color");
-  var logo = domElement.getAttribute("data-logo");
-  var headtext = domElement.getAttribute("data-headtext");
-  var subtext = domElement.getAttribute("data-subtext");
-  var tooltip = domElement.getAttribute("data-tooltip");
-  var channels = domElement.getAttribute("data-channels");
-  channels = JSON.parse(channels);
+function App(props) {
+  var widget_id = props?.widgetid;
 
   const [isWidgetOpen, setIsWidgetOpen] = useState(false);
   const [isWidgetTooltipOpen, setIsWidgetTooltipOpen] = useState(true);
   const [isLiveChatOpen, setIsLiveChatOpen] = useState(false);
   const [isSignUpFormOpen, setIsSignUpFormOpen] = useState(true);
   const [conversationData, setConversationData] = useState([]);
+  const [widgetConfig, setWidgetConfig] = useState({});
+  const [conversationId, setConversationId] = useState(
+    localStorage.getItem("conversationId")
+  );
+  const [agent, setAgent] = useState(null);
   const [formData, setFormData] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
+
+  var { color, logo, headText, subText, toolTip, channels } = widgetConfig;
 
   const baseURL = "https://oneroute-backend.herokuapp.com/api";
 
@@ -33,16 +32,43 @@ function App({ domElement }) {
     (x) => x?.name?.toLowerCase() === "livechat"
   );
 
-  const conversation_id = localStorage.getItem("conversation_id") || null;
+  const getWidgetConfigs = async () => {
+    setIsLoading(true);
 
-  const { messages } = useChat(conversation_id); // Creates a websocket and manages messaging
+    try {
+      let response = await fetch(`${baseURL}/widget/${widget_id}`);
+      const res = await response.json();
 
-  console.log(messages, "message");
-
+      const success = res?.success;
+      if (success === true) {
+        setWidgetConfig(res?.data);
+        setIsLoading(false);
+      }
+    } catch (err) {
+      setIsLoading(false);
+      const errorMessage = getRequestError(err);
+      setErrorMsg(errorMessage);
+    }
+  };
   useEffect(() => {
-    if (conversation_id) {
+    getWidgetConfigs();
+
+    if (conversationId) {
       setIsSignUpFormOpen(false);
       getConversation(true);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  var widgetElement = document.querySelector(".oneroute_widget");
+
+  useEffect(() => {
+    setInterval(myTimer, 1500);
+    function myTimer() {
+      var widgetValue = widgetElement.getAttribute("data-newmessage");
+      if (widgetValue === "true") {
+        getConversation(true);
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -79,24 +105,24 @@ function App({ domElement }) {
 
   const determineColorFromBg = () => {
     // If a leading # is provided, remove it
-    if (hexcolor.slice(0, 1) === "#") {
-      hexcolor = hexcolor.slice(1);
+    if (color?.slice(0, 1) === "#") {
+      color = color?.slice(1);
     }
 
     // If a three-character hexcode, make six-character
-    if (hexcolor.length === 3) {
-      hexcolor = hexcolor
-        .split("")
-        .map(function (hex) {
+    if (color?.length === 3) {
+      color = color
+        ?.split("")
+        ?.map(function (hex) {
           return hex + hex;
         })
-        .join("");
+        ?.join("");
     }
 
     // Convert to RGB value
-    var r = parseInt(hexcolor.substr(0, 2), 16);
-    var g = parseInt(hexcolor.substr(2, 2), 16);
-    var b = parseInt(hexcolor.substr(4, 2), 16);
+    var r = parseInt(color.substr(0, 2), 16);
+    var g = parseInt(color.substr(2, 2), 16);
+    var b = parseInt(color.substr(4, 2), 16);
 
     // Get YIQ ratio
     var yiq = (r * 299 + g * 587 + b * 114) / 1000;
@@ -133,15 +159,18 @@ function App({ domElement }) {
   };
 
   const getConversation = async (load) => {
+    widgetElement.setAttribute("data-newmessage", "false");
+
     load && setIsLoading(true);
 
     try {
-      let response = await fetch(`${baseURL}/conversations/${conversation_id}`);
+      let response = await fetch(`${baseURL}/conversations/${conversationId}`);
       const res = await response.json();
 
       const success = res?.success;
       if (success === true) {
         const convo = res?.data;
+        setAgent(convo.agent);
         setFormData({
           email: convo?.customer?.email,
           name: convo?.customer?.name,
@@ -150,6 +179,8 @@ function App({ domElement }) {
         setConversationData(data);
         load && setIsLoading(false);
         load && setIsSubmitting(null);
+      } else {
+        load && setIsLoading(false);
       }
     } catch (err) {
       load && setIsLoading(false);
@@ -187,7 +218,8 @@ function App({ domElement }) {
             ...formData,
             message: "",
           });
-          localStorage.setItem("conversation_id", res?.data?.conversation_id);
+          setConversationId(res?.data?.conversation_id);
+          localStorage.setItem("conversationId", res?.data?.conversation_id);
           setConversationData([...conversationData, res?.data]);
           setIsSubmitting(false);
           setIsSignUpFormOpen(false);
@@ -280,7 +312,6 @@ function App({ domElement }) {
             message: { text: "" },
           });
           setIsSubmitting(false);
-          getConversation(false);
         }
       } catch (err) {
         const filteredMessage = conversationData.filter((x) => x?.id !== "new");
@@ -301,7 +332,7 @@ function App({ domElement }) {
               <div
                 className="chat_header"
                 style={{
-                  backgroundColor: hexcolor,
+                  backgroundColor: color,
                   color: determineColorFromBg(),
                 }}
               >
@@ -315,7 +346,7 @@ function App({ domElement }) {
                   />
                 </div>
                 <img className="logo" src={logo} alt="" />
-                <p>{liveChatCredentials?.identifier}</p>
+                <p>{agent || liveChatCredentials?.identifier}</p>
               </div>
               {errorMsg && <p className="error_message">{errorMsg}</p>}
               <div className="chat_container">
@@ -477,13 +508,13 @@ function App({ domElement }) {
               <div
                 className="top_section"
                 style={{
-                  backgroundColor: hexcolor,
+                  backgroundColor: color,
                   color: determineColorFromBg(),
                 }}
               >
                 <img src={logo} alt="" />
-                <h3>{headtext}</h3>
-                <h4>{subtext}</h4>
+                <h3>{headText}</h3>
+                <h4>{subText}</h4>
               </div>
               <div className="bottom_section">
                 <div className="channels">
@@ -536,7 +567,7 @@ function App({ domElement }) {
       <div className="trigger_container">
         {isWidgetTooltipOpen && (
           <div className={`tooltip ${isWidgetOpen ? "none" : ""}`}>
-            {tooltip}
+            {toolTip}
             <span></span>
             <img
               src="https://s3.eu-west-3.amazonaws.com/oneroute.asb.ng/close.svg"
@@ -547,7 +578,7 @@ function App({ domElement }) {
         )}
         <div
           className="trigger_btn"
-          style={{ backgroundColor: hexcolor || "#000" }}
+          style={{ backgroundColor: color || "#000" }}
           onClick={() => setIsWidgetOpen(!isWidgetOpen)}
         >
           {isWidgetOpen ? (
