@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { Helmet } from "react-helmet";
 
 import { formatTime, getRequestError } from "./functions";
 
@@ -325,6 +326,25 @@ function App(props) {
 
   return (
     <>
+      <Helmet>
+        <script src="https://oneroute-backend.herokuapp.com/socket.io/socket.io.js"></script>
+        <script>
+          {`
+            var element = document.querySelector(".oneroute_widget");
+            console.log("HI THERE I'M HERE OOOOOOOOOO");
+      
+            var socket = io.connect("https://oneroute-backend.herokuapp.com/");
+            socket.on("newMessage", (data) => {
+              if (
+                data?.conversation?.id === localStorage.getItem("conversationId") &&
+                data?.message?.sender?.authUser !== false
+              ) {
+                element.setAttribute("data-newmessage", "true");
+              }
+            });
+          `}
+        </script>
+      </Helmet>
       {isWidgetOpen && (
         <div className={`widget_container ${isWidgetOpen ? "" : "none"}`}>
           {isLiveChatOpen ? (

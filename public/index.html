@@ -16,21 +16,5 @@
       class="oneroute_widget"
       data-widgetid="cff49f48-41e9-4eea-8cd5-86b86423799d"
     ></div>
-
-    <script src="https://oneroute-backend.herokuapp.com/socket.io/socket.io.js"></script>
-    <script>
-      var element = document.querySelector(".oneroute_widget");
-      console.log("HI THERE I'M HERE OOOOOOOOOO");
-
-      var socket = io.connect("https://oneroute-backend.herokuapp.com/");
-      socket.on("newMessage", (data) => {
-        if (
-          data?.conversation?.id === localStorage.getItem("conversationId") &&
-          data?.message?.sender?.authUser !== false
-        ) {
-          element.setAttribute("data-newmessage", "true");
-        }
-      });
-    </script>
   </body>
 </html>
