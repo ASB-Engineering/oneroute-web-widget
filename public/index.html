@@ -20,6 +20,7 @@
     <script src="https://oneroute-backend.herokuapp.com/socket.io/socket.io.js"></script>
     <script>
       var element = document.querySelector(".oneroute_widget");
+      console.log("HI THERE I'M HERE OOOOOOOOOO");
 
       var socket = io.connect("https://oneroute-backend.herokuapp.com/");
       socket.on("newMessage", (data) => {
