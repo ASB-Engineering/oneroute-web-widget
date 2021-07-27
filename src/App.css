@@ -295,6 +295,7 @@ button {
   font-size: 13.5px;
   line-height: 150%;
   color: #474f58;
+  line-break: anywhere;
 }
 
 .oneroute_widget .chat_messages .message .content p {
