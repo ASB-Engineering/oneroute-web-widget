@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Helmet } from "react-helmet";
 
 import { formatTime, getRequestError } from "./functions";
 
@@ -24,6 +23,7 @@ function App(props) {
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
+  const [scriptSrcLoaded, setScriptSrcLoaded] = useState(false);
 
   var { color, logo, headText, subText, toolTip, channels } = widgetConfig;
 
@@ -60,6 +60,43 @@ function App(props) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Socket.io Script Starts Here
+  useEffect(() => {
+    const scriptTag1 = document.createElement("script");
+    scriptTag1.src =
+      "https://oneroute-backend.herokuapp.com/socket.io/socket.io.js";
+
+    document.body.appendChild(scriptTag1);
+    setScriptSrcLoaded(true);
+    return () => {
+      document.body.removeChild(scriptTag1);
+    };
+  }, []);
+  useEffect(() => {
+    if (scriptSrcLoaded === true) {
+      const scriptTag1 = document.createElement("script");
+      scriptTag1.innerHTML = `
+        var element = document.querySelector(".oneroute_widget");
+
+        var socket = io.connect("https://oneroute-backend.herokuapp.com/");
+        socket.on("newMessage", (data) => {
+          if (
+            data?.conversation?.id === localStorage.getItem("conversationId") &&
+            data?.message?.sender?.authUser !== false
+          ) {
+            element.setAttribute("data-newmessage", "true");
+          }
+        });
+      `;
+
+      document.body.appendChild(scriptTag1);
+      return () => {
+        document.body.removeChild(scriptTag1);
+      };
+    }
+  }, [scriptSrcLoaded]);
+  // Socket.io Script Ends Here
 
   var widgetElement = document.querySelector(".oneroute_widget");
 
@@ -326,25 +363,6 @@ function App(props) {
 
   return (
     <>
-      <Helmet>
-        <script src="https://oneroute-backend.herokuapp.com/socket.io/socket.io.js"></script>
-        <script>
-          {`
-            var element = document.querySelector(".oneroute_widget");
-            console.log("HI THERE I'M HERE OOOOOOOOOO");
-      
-            var socket = io.connect("https://oneroute-backend.herokuapp.com/");
-            socket.on("newMessage", (data) => {
-              if (
-                data?.conversation?.id === localStorage.getItem("conversationId") &&
-                data?.message?.sender?.authUser !== false
-              ) {
-                element.setAttribute("data-newmessage", "true");
-              }
-            });
-          `}
-        </script>
-      </Helmet>
       {isWidgetOpen && (
         <div className={`widget_container ${isWidgetOpen ? "" : "none"}`}>
           {isLiveChatOpen ? (
