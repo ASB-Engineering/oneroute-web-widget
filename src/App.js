@@ -75,25 +75,27 @@ function App(props) {
   }, []);
   useEffect(() => {
     if (scriptSrcLoaded === true) {
-      const scriptTag1 = document.createElement("script");
-      scriptTag1.innerHTML = `
-        var element = document.querySelector(".oneroute_widget");
+      setTimeout(() => {
+        const scriptTag1 = document.createElement("script");
+        scriptTag1.innerHTML = `
+          var element = document.querySelector(".oneroute_widget");
 
-        var socket = io.connect("https://oneroute-backend.herokuapp.com/");
-        socket.on("newMessage", (data) => {
-          if (
-            data?.conversation?.id === localStorage.getItem("conversationId") &&
-            data?.message?.sender?.authUser !== false
-          ) {
-            element.setAttribute("data-newmessage", "true");
-          }
-        });
-      `;
+          var socket = io.connect("https://oneroute-backend.herokuapp.com/");
+          socket.on("newMessage", (data) => {
+            if (
+              data?.conversation?.id === localStorage.getItem("conversationId") &&
+              data?.message?.sender?.authUser !== false
+            ) {
+              element.setAttribute("data-newmessage", "true");
+            }
+          });
+        `;
 
-      document.body.appendChild(scriptTag1);
-      return () => {
-        document.body.removeChild(scriptTag1);
-      };
+        document.body.appendChild(scriptTag1);
+        return () => {
+          document.body.removeChild(scriptTag1);
+        };
+      }, 3000);
     }
   }, [scriptSrcLoaded]);
   // Socket.io Script Ends Here
