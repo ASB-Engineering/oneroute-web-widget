@@ -27,7 +27,7 @@ function App(props) {
 
   var { color, logo, headText, subText, toolTip, channels } = widgetConfig;
 
-  const baseURL = "https://oneroute-backend.herokuapp.com/api";
+  const baseURL = "https://app.oneroute.io/api";
 
   const liveChatCredentials = channels?.find(
     (x) => x?.name?.toLowerCase() === "livechat"
@@ -64,8 +64,7 @@ function App(props) {
   // Socket.io Script Starts Here
   useEffect(() => {
     const scriptTag1 = document.createElement("script");
-    scriptTag1.src =
-      "https://oneroute-backend.herokuapp.com/socket.io/socket.io.js";
+    scriptTag1.src = "https://app.oneroute.io/socket.io/socket.io.js";
 
     document.body.appendChild(scriptTag1);
     setScriptSrcLoaded(true);
@@ -80,7 +79,7 @@ function App(props) {
         scriptTag1.innerHTML = `
           var element = document.querySelector(".oneroute_widget");
 
-          var socket = io.connect("https://oneroute-backend.herokuapp.com/");
+          var socket = io.connect("https://app.oneroute.io/");
           socket.on("newMessage", (data) => {
             if (
               data?.conversation?.id === localStorage.getItem("conversationId") &&
