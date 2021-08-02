@@ -25,7 +25,8 @@ function App(props) {
   const [errorMsg, setErrorMsg] = useState(null);
   const [scriptSrcLoaded, setScriptSrcLoaded] = useState(false);
 
-  var { color, logo, headText, subText, toolTip, channels } = widgetConfig;
+  var { color, logo, headText, subText, toolTip, channels } =
+    widgetConfig || {};
 
   const baseURL = "https://api.oneroute.io/api";
 
