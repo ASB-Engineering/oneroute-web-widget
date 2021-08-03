@@ -15,9 +15,6 @@ function App(props) {
   const [isSignUpFormOpen, setIsSignUpFormOpen] = useState(true);
   const [conversationData, setConversationData] = useState([]);
   const [widgetConfig, setWidgetConfig] = useState({});
-  const [conversationId, setConversationId] = useState(
-    localStorage.getItem("conversationId")
-  );
   const [agent, setAgent] = useState(null);
   const [formData, setFormData] = useState({});
   const [isLoading, setIsLoading] = useState(false);
@@ -33,6 +30,11 @@ function App(props) {
   const liveChatCredentials = channels?.find(
     (x) => x?.name?.toLowerCase() === "livechat"
   );
+
+  const conversationIdRef = useRef(
+    localStorage.getItem("conversationId") || null
+  );
+  console.log(conversationIdRef.current);
 
   const getWidgetConfigs = async () => {
     setIsLoading(true);
@@ -55,7 +57,7 @@ function App(props) {
   useEffect(() => {
     getWidgetConfigs();
 
-    if (conversationId) {
+    if (conversationIdRef.current) {
       setIsSignUpFormOpen(false);
       getConversation(true);
     }
@@ -204,7 +206,9 @@ function App(props) {
     load && setIsLoading(true);
 
     try {
-      let response = await fetch(`${baseURL}/conversations/${conversationId}`);
+      let response = await fetch(
+        `${baseURL}/conversations/${conversationIdRef.current}`
+      );
       const res = await response.json();
 
       const success = res?.success;
@@ -258,7 +262,7 @@ function App(props) {
             ...formData,
             message: "",
           });
-          setConversationId(res?.data?.conversation_id);
+          conversationIdRef.current = res?.data?.conversation_id;
           localStorage.setItem("conversationId", res?.data?.conversation_id);
           setConversationData([...conversationData, res?.data]);
           setIsSubmitting(false);
