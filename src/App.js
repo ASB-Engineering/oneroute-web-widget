@@ -25,7 +25,7 @@ function App(props) {
   var { color, logo, headText, subText, toolTip, channels } =
     widgetConfig || {};
 
-  const baseURL = "https://api.oneroute.io/api";
+  const baseURL = "https://api.oneroute.io/";
 
   const liveChatCredentials = channels?.find(
     (x) => x?.name?.toLowerCase() === "livechat"
@@ -34,13 +34,12 @@ function App(props) {
   const conversationIdRef = useRef(
     localStorage.getItem("conversationId") || null
   );
-  console.log(conversationIdRef.current);
 
   const getWidgetConfigs = async () => {
     setIsLoading(true);
 
     try {
-      let response = await fetch(`${baseURL}/widget/${widget_id}`);
+      let response = await fetch(`${baseURL}api/widget/${widget_id}`);
       const res = await response.json();
 
       const success = res?.success;
@@ -67,7 +66,7 @@ function App(props) {
   // Socket.io Script Starts Here
   useEffect(() => {
     const scriptTag1 = document.createElement("script");
-    scriptTag1.src = "https://api.oneroute.io/socket.io/socket.io.js";
+    scriptTag1.src = `${baseURL}socket.io/socket.io.js`;
 
     document.body.appendChild(scriptTag1);
     setScriptSrcLoaded(true);
@@ -82,7 +81,7 @@ function App(props) {
         scriptTag1.innerHTML = `
           var element = document.querySelector(".oneroute_widget");
 
-          var socket = io.connect("https://api.oneroute.io/");
+          var socket = io.connect("${baseURL}");
           socket.on("newMessage", (data) => {
             if (
               data?.conversation?.id === localStorage.getItem("conversationId") &&
@@ -207,7 +206,7 @@ function App(props) {
 
     try {
       let response = await fetch(
-        `${baseURL}/conversations/${conversationIdRef.current}`
+        `${baseURL}api/conversations/${conversationIdRef.current}`
       );
       const res = await response.json();
 
@@ -241,7 +240,7 @@ function App(props) {
       setIsSubmitting(true);
       try {
         let response = await fetch(
-          `${baseURL}/conversations/incoming-messages/widget/${liveChatCredentials?.to}`,
+          `${baseURL}api/conversations/incoming-messages/widget/${liveChatCredentials?.to}`,
           {
             method: "POST",
             body: JSON.stringify({
@@ -292,7 +291,7 @@ function App(props) {
       fileData.append("media", fileToUpload);
 
       try {
-        let response = await fetch(`${baseURL}/utils/upload`, {
+        let response = await fetch(`${baseURL}api/utils/upload`, {
           method: "POST",
           body: fileData,
         });
@@ -334,7 +333,7 @@ function App(props) {
 
       try {
         let response = await fetch(
-          `${baseURL}/conversations/incoming-messages/widget/${liveChatCredentials?.to}`,
+          `${baseURL}api/conversations/incoming-messages/widget/${liveChatCredentials?.to}`,
           {
             method: "POST",
             body: JSON.stringify({
