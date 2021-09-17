@@ -264,17 +264,17 @@ button {
 }
 @media screen and (max-width: 400px) {
   .oneroute_widget .chat_messages {
-    height: 55vh;
+    height: 62vh;
   }
 }
 @media screen and (max-height: 690px) {
   .oneroute_widget .chat_messages {
-    height: 50vh;
+    height: 57vh;
   }
 }
 @media screen and (max-height: 610px) {
   .oneroute_widget .chat_messages {
-    height: 45vh;
+    height: 52vh;
   }
 }
 
@@ -497,8 +497,8 @@ button {
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  padding-right: 3px;
-  padding-bottom: 3px;
+  padding-right: 8px;
+  padding-bottom: 8px;
   background: transparent;
   float: right;
 }
