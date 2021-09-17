@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { io } from "socket.io-client";
 
 import { formatTime, getRequestError } from "./functions";
 
@@ -20,12 +21,12 @@ function App(props) {
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
-  const [scriptSrcLoaded, setScriptSrcLoaded] = useState(false);
 
   var { color, logo, headText, subText, toolTip, channels } =
     widgetConfig || {};
 
   const baseURL = "https://api.oneroute.io/";
+  // const baseURL = "https://oneroute-backend.herokuapp.com/";
 
   const liveChatCredentials = channels?.find(
     (x) => x?.name?.toLowerCase() === "livechat"
@@ -63,54 +64,39 @@ function App(props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Socket.io Script Starts Here
+  // WebSocket.io Script Starts Here
   useEffect(() => {
-    const scriptTag1 = document.createElement("script");
-    scriptTag1.src = `${baseURL}socket.io/socket.io.js`;
+    var socket = io(baseURL, {
+      reconnectionDelay: 1000,
+      reconnection: true,
+    });
 
-    document.body.appendChild(scriptTag1);
-    setScriptSrcLoaded(true);
-    return () => {
-      document.body.removeChild(scriptTag1);
-    };
+    var element = document.querySelector(".oneroute_widget");
+
+    socket.on("newMessage", (data) => {
+      if (
+        data?.conversation?.id === localStorage.getItem("conversationId") &&
+        data?.message?.sender?.authUser !== false
+      ) {
+        element.setAttribute("data-newmessage", "true");
+      }
+    });
   }, []);
-  useEffect(() => {
-    if (scriptSrcLoaded === true) {
-      setTimeout(() => {
-        const scriptTag1 = document.createElement("script");
-        scriptTag1.innerHTML = `
-          var element = document.querySelector(".oneroute_widget");
-
-          var socket = io.connect("${baseURL}");
-          socket.on("newMessage", (data) => {
-            if (
-              data?.conversation?.id === localStorage.getItem("conversationId") &&
-              data?.message?.sender?.authUser !== false
-            ) {
-              element.setAttribute("data-newmessage", "true");
-            }
-          });
-        `;
-
-        document.body.appendChild(scriptTag1);
-        return () => {
-          document.body.removeChild(scriptTag1);
-        };
-      }, 3000);
-    }
-  }, [scriptSrcLoaded]);
-  // Socket.io Script Ends Here
+  // WebSocket.io Script Ends Here
 
   var widgetElement = document.querySelector(".oneroute_widget");
 
   useEffect(() => {
-    setInterval(myTimer, 1500);
-    function myTimer() {
+    const timer = setInterval(() => {
       var widgetValue = widgetElement.getAttribute("data-newmessage");
       if (widgetValue === "true") {
         getConversation(true);
       }
-    }
+    }, 1000);
+
+    // clearing interval
+    return () => clearInterval(timer);
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -555,7 +541,16 @@ function App(props) {
                   color: determineColorFromBg(),
                 }}
               >
-                <img src={logo} alt="" />
+                <div
+                  className="close"
+                  onClick={() => setIsWidgetOpen(!isWidgetOpen)}
+                >
+                  <img
+                    src="https://s3.eu-west-3.amazonaws.com/oneroute.asb.ng/chevron.svg"
+                    alt=""
+                  />
+                </div>
+                <img className="logo" src={logo} alt="" />
                 <h3>{headText}</h3>
                 <h4>{subText}</h4>
               </div>
@@ -607,37 +602,32 @@ function App(props) {
           )}
         </div>
       )}
-      <div className="trigger_container">
-        {isWidgetTooltipOpen && (
-          <div className={`tooltip ${isWidgetOpen ? "none" : ""}`}>
-            {toolTip}
-            <span></span>
-            <img
-              src="https://s3.eu-west-3.amazonaws.com/oneroute.asb.ng/close.svg"
-              alt=""
-              onClick={() => setIsWidgetTooltipOpen(false)}
-            />
-          </div>
-        )}
-        <div
-          className="trigger_btn"
-          style={{ backgroundColor: color || "#000" }}
-          onClick={() => setIsWidgetOpen(!isWidgetOpen)}
-        >
-          {isWidgetOpen ? (
-            <img
-              src="https://s3.eu-west-3.amazonaws.com/oneroute.asb.ng/close.svg"
-              alt=""
-            />
-          ) : (
+      {!isWidgetOpen && (
+        <div className="trigger_container">
+          {isWidgetTooltipOpen && (
+            <div className={`tooltip ${isWidgetOpen ? "none" : ""}`}>
+              {toolTip}
+              <span></span>
+              <img
+                src="https://s3.eu-west-3.amazonaws.com/oneroute.asb.ng/close.svg"
+                alt=""
+                onClick={() => setIsWidgetTooltipOpen(false)}
+              />
+            </div>
+          )}
+          <div
+            className="trigger_btn"
+            style={{ backgroundColor: color || "#000" }}
+            onClick={() => setIsWidgetOpen(!isWidgetOpen)}
+          >
             <img
               src="https://s3.eu-west-3.amazonaws.com/oneroute.asb.ng/oneroute-w.svg"
               className={!isWidgetOpen ? "closed" : ""}
               alt=""
             />
-          )}
+          </div>
         </div>
-      </div>
+      )}
     </>
   );
 }
