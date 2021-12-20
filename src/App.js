@@ -69,6 +69,7 @@ function App(props) {
     var socket = io(baseURL, {
       reconnectionDelay: 1000,
       reconnection: true,
+      transports: ["websocket"],
     });
 
     var element = document.querySelector(".oneroute_widget");
