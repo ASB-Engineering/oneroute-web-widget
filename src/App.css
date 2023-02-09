@@ -348,6 +348,17 @@ button {
   color: #8f99a6;
 }
 
+.oneroute_widget .chat_messages .load_previous {
+  margin: 0;
+  margin-top: -20px;
+  margin-bottom: 20px;
+  font-size: 13px;
+  font-weight: bold;
+  text-align: center;
+  font-style: italic;
+  letter-spacing: 0.3px;
+}
+
 .oneroute_widget .chat_messages .send_status {
   margin: 0;
   margin-top: -14px;

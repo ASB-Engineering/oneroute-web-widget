@@ -15,12 +15,14 @@ function App(props) {
   const [isWidgetTooltipOpen, setIsWidgetTooltipOpen] = useState(true);
   const [isLiveChatOpen, setIsLiveChatOpen] = useState(false);
   const [isSignUpFormOpen, setIsSignUpFormOpen] = useState(true);
-  const [conversationData, setConversationData] = useState([]);
+  const [convoData, setConvoData] = useState({});
   const [widgetConfig, setWidgetConfig] = useState({});
-  const [agent, setAgent] = useState(null);
   const [formData, setFormData] = useState({});
-  const [isLoading, setIsLoading] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const [isLoadingMessages, setIsLoadingMessages] = useState(false);
+  const [isLoadingPrevMessages, setIsLoadingPrevMessages] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(null);
+  const [scrolltoBottom, triggerScrollToBottom] = useState(false);
   const [errorMsg, setErrorMsg] = useState(null);
 
   var { color, logo, headText, subText, toolTip, channels } =
@@ -28,6 +30,8 @@ function App(props) {
 
   const baseURL = "https://api.oneroute.io/";
   // const baseURL = "https://oneroute-backend.herokuapp.com/";
+
+  const PAGE_SIZE = 10;
 
   const liveChatCredentials = channels?.find(
     (x) => x?.name?.toLowerCase() === "livechat"
@@ -37,9 +41,13 @@ function App(props) {
     localStorage.getItem("conversationId") || null
   );
 
-  const getWidgetConfigs = async () => {
-    setIsLoading(true);
+  const isLastPageOfMessages = useRef(false);
 
+  const convoMessages = useRef([]);
+
+  const chatContentRef = useRef();
+
+  const getWidgetConfigs = async () => {
     try {
       let response = await fetch(`${baseURL}api/widget/${widget_id}`);
       const res = await response.json();
@@ -47,10 +55,8 @@ function App(props) {
       const success = res?.success;
       if (success === true) {
         setWidgetConfig(res?.data);
-        setIsLoading(false);
       }
     } catch (err) {
-      setIsLoading(false);
       const errorMessage = getRequestError(err);
       setErrorMsg(errorMessage);
     }
@@ -64,7 +70,7 @@ function App(props) {
 
     if (conversationIdRef.current) {
       setIsSignUpFormOpen(false);
-      getConversation(true);
+      getConversation();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -96,7 +102,7 @@ function App(props) {
     const timer = setInterval(() => {
       var widgetValue = widgetElement.getAttribute("data-newmessage");
       if (widgetValue === "true") {
-        getConversation(true);
+        getConvoMessages(false, true);
       }
     }, 1000);
 
@@ -112,6 +118,22 @@ function App(props) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isWidgetOpen]);
+
+  useEffect(() => {
+    if (isLiveChatOpen) {
+      document
+        .querySelector(".chat_messages")
+        .addEventListener("scroll", loadMoreChats);
+
+      triggerScrollToBottom(true);
+      const timer = setInterval(() => {
+        triggerScrollToBottom(false);
+        clearInterval(timer);
+      }, 1000);
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLiveChatOpen]);
 
   const getChannelIcon = (channel) => {
     switch (channel.toLowerCase()) {
@@ -185,17 +207,20 @@ function App(props) {
     if (errorMsg) setErrorMsg(null);
   };
 
-  const AlwaysScrollToBottom = () => {
+  const ScrollToBottom = () => {
     const elementRef = useRef();
     useEffect(() => elementRef.current.scrollIntoView({ behavior: "smooth" }));
     return <div ref={elementRef} />;
   };
 
-  const getConversation = async (load) => {
-    widgetElement.setAttribute("data-newmessage", "false");
+  const scrollToMiddle = () => {
+    const chatContainer = chatContentRef.current;
+    if (chatContainer) {
+      chatContainer.scrollTop = chatContainer.scrollHeight / 4;
+    }
+  };
 
-    load && setIsLoading(true);
-
+  const getConversation = async () => {
     try {
       let response = await fetch(
         `${baseURL}api/conversations/${conversationIdRef.current}`
@@ -204,24 +229,74 @@ function App(props) {
 
       const success = res?.success;
       if (success === true) {
-        const convo = res?.data;
-        setAgent(convo.agent);
+        setConvoData(res?.data);
         setFormData({
-          email: convo?.customer?.email,
-          name: convo?.customer?.name,
+          email: res?.data?.customer?.email,
+          name: res?.data?.customer?.name,
         });
-        const data = [...convo?.Messages].reverse() || [];
-        setConversationData(data);
-        load && setIsLoading(false);
-        load && setIsSubmitting(null);
-      } else {
-        load && setIsLoading(false);
+
+        getConvoMessages(true, true);
       }
     } catch (err) {
-      load && setIsLoading(false);
       setIsSignUpFormOpen(true);
       const errorMessage = getRequestError(err);
       setErrorMsg(errorMessage);
+    }
+  };
+
+  const getConvoMessages = async (load, noPaginate) => {
+    widgetElement.setAttribute("data-newmessage", "false");
+    load && setIsLoadingMessages(true);
+
+    const lastRowId = convoMessages.current?.[0]?.row_id;
+
+    if (!isLastPageOfMessages.current) {
+      try {
+        let response = await fetch(
+          `${baseURL}api/conversations/${
+            conversationIdRef.current
+          }/messages?page[size]=${PAGE_SIZE}${
+            noPaginate ? `` : `&lastMessageAt=${lastRowId}`
+          }`
+        );
+        const res = await response.json();
+
+        const success = res?.success;
+        if (success === true) {
+          convoMessages.current = noPaginate
+            ? [...res?.data?.reverse()]
+            : [...res?.data?.reverse(), ...(convoMessages.current || [])];
+          isLastPageOfMessages.current = res?.data?.length < 10 ? true : false;
+
+          load && setIsLoadingMessages(false);
+          load && setIsSubmitting(null);
+        } else {
+          load && setIsLoadingMessages(false);
+        }
+      } catch (err) {
+        load && setIsLoadingMessages(false);
+        setIsSignUpFormOpen(true);
+        const errorMessage = getRequestError(err);
+        setErrorMsg(errorMessage);
+      }
+    }
+  };
+
+  const loadMoreChats = () => {
+    const scrollTop = chatContentRef.current?.scrollTop;
+
+    if (
+      scrollTop <= 0 &&
+      !isLastPageOfMessages.current &&
+      convoMessages.current?.length &&
+      !isLoadingMessages &&
+      !isLoadingPrevMessages
+    ) {
+      setIsLoadingPrevMessages(true);
+      getConvoMessages().then(() => {
+        setIsLoadingPrevMessages(false);
+        scrollToMiddle();
+      });
     }
   };
 
@@ -255,7 +330,7 @@ function App(props) {
           });
           conversationIdRef.current = res?.data?.conversation_id;
           localStorage.setItem("conversationId", res?.data?.conversation_id);
-          setConversationData([...conversationData, res?.data]);
+          setConvoData(res?.data);
           setIsSubmitting(false);
           setIsSignUpFormOpen(false);
         }
@@ -277,7 +352,7 @@ function App(props) {
     const fileToUpload = files[0];
 
     if (fileToUpload) {
-      setIsLoading(true);
+      setIsUploading(true);
 
       var fileData = new FormData();
       fileData.append("media", fileToUpload);
@@ -300,28 +375,29 @@ function App(props) {
               },
             },
           });
-          setIsLoading(false);
+          setIsUploading(false);
         }
       } catch (err) {
         const errorMessage = getRequestError(err);
         setErrorMsg(errorMessage);
-        setIsLoading(false);
+        setIsUploading(false);
       }
     }
   };
 
   const replyConversation = async () => {
     if (formData?.message?.text?.length > 0) {
-      setConversationData([
-        ...conversationData,
+      convoMessages.current = [
+        ...convoMessages.current,
         {
           id: "new",
           imageUrl: formData?.message?.attachment?.url,
           content: formData?.message?.text,
-          createdAt: new Date(),
+          updatedAt: new Date(),
         },
-      ]);
+      ];
       setIsSubmitting(true);
+      triggerScrollToBottom(true);
 
       try {
         let response = await fetch(
@@ -349,12 +425,16 @@ function App(props) {
           setIsSubmitting(false);
         }
       } catch (err) {
-        const filteredMessage = conversationData.filter((x) => x?.id !== "new");
-        setConversationData(filteredMessage);
+        const filteredMessage = convoMessages.current?.filter(
+          (x) => x?.id !== "new"
+        );
+        convoMessages.current = filteredMessage;
         setIsSubmitting(null);
         const errorMessage = getRequestError(err);
         setErrorMsg(errorMessage);
       }
+
+      triggerScrollToBottom(false);
     }
   };
 
@@ -383,7 +463,7 @@ function App(props) {
                       />
                     </div>
                     <img className="logo" src={logo} alt="" />
-                    <p>{agent || liveChatCredentials?.identifier}</p>
+                    <p>{convoData?.agent || liveChatCredentials?.identifier}</p>
                   </div>
                   {errorMsg && <p className="error_message">{errorMsg}</p>}
                   <div className="chat_container">
@@ -428,8 +508,19 @@ function App(props) {
                       </form>
                     ) : (
                       <>
-                        <div className="chat_messages">
-                          {conversationData?.map((msg, i) => (
+                        <div className="chat_messages" ref={chatContentRef}>
+                          {isLoadingPrevMessages ? (
+                            <div className="load_previous">
+                              Loading previous messages...
+                            </div>
+                          ) : (
+                            !isLastPageOfMessages.current && (
+                              <div className="load_previous">
+                                Scroll up to load previous messages
+                              </div>
+                            )
+                          )}
+                          {convoMessages.current?.map((msg, i) => (
                             <div
                               key={i}
                               className={`message ${
@@ -444,20 +535,23 @@ function App(props) {
                                   <img src={msg?.imageUrl} alt="" />
                                 )}
                                 <h6>{msg?.content}</h6>
-                                <p>{formatTime(msg?.createdAt)}</p>
+                                <p>{formatTime(msg?.updatedAt)}</p>
                               </div>
                             </div>
                           ))}
+                          {isUploading === true && (
+                            <p className="send_status">Uploading...</p>
+                          )}
                           {isSubmitting === true && (
                             <p className="send_status">Sending...</p>
                           )}
                           {isSubmitting === false && (
                             <p className="send_status">Sent</p>
                           )}
-                          {isLoading === true && (
+                          {isLoadingMessages === true && (
                             <p className="loading">Loading...</p>
                           )}
-                          <AlwaysScrollToBottom />
+                          {scrolltoBottom && <ScrollToBottom />}
                         </div>
                         <div className="chat_input_container">
                           <textarea
