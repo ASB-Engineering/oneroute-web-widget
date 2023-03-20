@@ -219,7 +219,7 @@ button {
   margin-bottom: 75px;
   padding: 30px 12px 0px 12px;
   height: 230px;
-  width: 87%;
+  width: 100%;
 }
 
 .oneroute_widget .chat_signup_form .form_group {
@@ -246,7 +246,7 @@ button {
   font-size: 13.5px;
   font-weight: 500;
   letter-spacing: 0.2px;
-  width: 108%;
+  width: 100%;
   color: #fff;
   background: #4ba3e7;
   border: 1px solid #4ba3e7;
