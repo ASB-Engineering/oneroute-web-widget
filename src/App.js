@@ -706,7 +706,7 @@ function App(props) {
           )}
           {!isWidgetOpen && (
             <div className="trigger_container">
-              {isWidgetTooltipOpen && (
+              {isWidgetTooltipOpen && toolTip && (
                 <div className={`tooltip ${isWidgetOpen ? "none" : ""}`}>
                   {toolTip}
                   <span></span>
@@ -723,7 +723,10 @@ function App(props) {
                 onClick={() => setIsWidgetOpen(!isWidgetOpen)}
               >
                 <img
-                  src="https://s3.eu-west-3.amazonaws.com/oneroute.asb.ng/oneroute-w.svg"
+                  src={
+                    logo ||
+                    "https://s3.eu-west-3.amazonaws.com/oneroute.asb.ng/oneroute-w.svg"
+                  }
                   className={!isWidgetOpen ? "closed" : ""}
                   alt=""
                 />
