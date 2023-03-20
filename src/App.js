@@ -120,10 +120,10 @@ function App(props) {
   }, [isWidgetOpen]);
 
   useEffect(() => {
-    if (isLiveChatOpen) {
-      document
-        .querySelector(".chat_messages")
-        .addEventListener("scroll", loadMoreChats);
+    const chatMessagesEl = document?.querySelector(".chat_messages");
+
+    if (isLiveChatOpen && chatMessagesEl) {
+      chatMessagesEl.addEventListener("scroll", loadMoreChats);
 
       triggerScrollToBottom(true);
       const timer = setInterval(() => {
