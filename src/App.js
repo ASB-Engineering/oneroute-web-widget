@@ -29,7 +29,7 @@ function App(props) {
     widgetConfig || {};
 
   // const baseURL = "https://api.oneroute.io/";
-  const baseURL = "https://api.staging.oneroute.io/";
+  const baseURL = "https://api.oneroute.io/";
 
   const PAGE_SIZE = 10;
 
