@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/oneroute-web-widget/precache-manifest.9ba0a2ea79778f11d675532edecbe3c7.js"
+  "/oneroute-web-widget/precache-manifest.6d0e3db870c045c62a88bc093f53e28f.js"
 );
 
 self.addEventListener('message', (event) => {

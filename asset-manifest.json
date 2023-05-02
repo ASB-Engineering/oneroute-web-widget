@@ -1,14 +1,14 @@
 {
   "files": {
     "main.css": "/oneroute-web-widget/static/css/main.c44ee42f.chunk.css",
-    "main.js": "/oneroute-web-widget/static/js/main.bf1b6ef9.chunk.js",
-    "main.js.map": "/oneroute-web-widget/static/js/main.bf1b6ef9.chunk.js.map",
+    "main.js": "/oneroute-web-widget/static/js/main.b6fe40d0.chunk.js",
+    "main.js.map": "/oneroute-web-widget/static/js/main.b6fe40d0.chunk.js.map",
     "runtime-main.js": "/oneroute-web-widget/static/js/runtime-main.1cb27685.js",
     "runtime-main.js.map": "/oneroute-web-widget/static/js/runtime-main.1cb27685.js.map",
     "static/js/2.98e3ecd1.chunk.js": "/oneroute-web-widget/static/js/2.98e3ecd1.chunk.js",
     "static/js/2.98e3ecd1.chunk.js.map": "/oneroute-web-widget/static/js/2.98e3ecd1.chunk.js.map",
     "index.html": "/oneroute-web-widget/index.html",
-    "precache-manifest.9ba0a2ea79778f11d675532edecbe3c7.js": "/oneroute-web-widget/precache-manifest.9ba0a2ea79778f11d675532edecbe3c7.js",
+    "precache-manifest.6d0e3db870c045c62a88bc093f53e28f.js": "/oneroute-web-widget/precache-manifest.6d0e3db870c045c62a88bc093f53e28f.js",
     "service-worker.js": "/oneroute-web-widget/service-worker.js",
     "static/css/main.c44ee42f.chunk.css.map": "/oneroute-web-widget/static/css/main.c44ee42f.chunk.css.map",
     "static/js/2.98e3ecd1.chunk.js.LICENSE.txt": "/oneroute-web-widget/static/js/2.98e3ecd1.chunk.js.LICENSE.txt"
@@ -17,6 +17,6 @@
     "static/js/runtime-main.1cb27685.js",
     "static/js/2.98e3ecd1.chunk.js",
     "static/css/main.c44ee42f.chunk.css",
-    "static/js/main.bf1b6ef9.chunk.js"
+    "static/js/main.b6fe40d0.chunk.js"
   ]
 }
