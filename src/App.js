@@ -28,8 +28,8 @@ function App(props) {
   var { color, logo, headText, subText, toolTip, channels } =
     widgetConfig || {};
 
-  const baseURL = "https://api.oneroute.io/";
-  // const baseURL = "https://oneroute-backend.herokuapp.com/";
+  // const baseURL = "https://api.oneroute.io/";
+  const baseURL = "https://api.staging.oneroute.io/";
 
   const PAGE_SIZE = 10;
 
