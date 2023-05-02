@@ -1,10 +1,10 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "4cabff93042c444703db7fbcc629c1a1",
+    "revision": "3d7e5573e905f0ac983987478a04736f",
     "url": "/oneroute-web-widget/index.html"
   },
   {
-    "revision": "80fc167426d63decba23",
+    "revision": "c83c09c51d031089784f",
     "url": "/oneroute-web-widget/static/css/main.c44ee42f.chunk.css"
   },
   {
@@ -16,8 +16,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/oneroute-web-widget/static/js/2.98e3ecd1.chunk.js.LICENSE.txt"
   },
   {
-    "revision": "80fc167426d63decba23",
-    "url": "/oneroute-web-widget/static/js/main.e91cb04f.chunk.js"
+    "revision": "c83c09c51d031089784f",
+    "url": "/oneroute-web-widget/static/js/main.bf1b6ef9.chunk.js"
   },
   {
     "revision": "9c54b4596d94c9cc7923",
