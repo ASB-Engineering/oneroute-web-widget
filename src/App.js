@@ -18,6 +18,7 @@ function App(props) {
   const [convoData, setConvoData] = useState({});
   const [widgetConfig, setWidgetConfig] = useState({});
   const [formData, setFormData] = useState({});
+  const [convos, setConvos] = useState([]);
   const [isUploading, setIsUploading] = useState(false);
   const [isLoadingMessages, setIsLoadingMessages] = useState(false);
   const [isLoadingPrevMessages, setIsLoadingPrevMessages] = useState(false);
@@ -62,6 +63,8 @@ function App(props) {
     }
   };
   useEffect(() => {
+    console.log(convos);
+
     getWidgetConfigs();
 
     if (!window.location.href?.includes("/feedback")) {
@@ -236,6 +239,8 @@ function App(props) {
         });
 
         getConvoMessages(true, true);
+      } else {
+        localStorage.removeItem("conversationId");
       }
     } catch (err) {
       setIsSignUpFormOpen(true);
@@ -263,9 +268,12 @@ function App(props) {
 
         const success = res?.success;
         if (success === true) {
-          convoMessages.current = noPaginate
+          const data = noPaginate
             ? [...res?.data?.reverse()]
             : [...res?.data?.reverse(), ...(convoMessages.current || [])];
+          convoMessages.current = data;
+          setConvos(data);
+
           isLastPageOfMessages.current = res?.data?.length < 10 ? true : false;
 
           load && setIsLoadingMessages(false);
