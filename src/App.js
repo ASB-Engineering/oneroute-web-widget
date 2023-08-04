@@ -223,7 +223,7 @@ function App(props) {
   const getConversation = async () => {
     try {
       let response = await fetch(
-        `${baseURL}api/conversations/${conversationIdRef.current}`
+        `${baseURL}api/conversations/${conversationIdRef.current}/widget`
       );
       const res = await response.json();
 
