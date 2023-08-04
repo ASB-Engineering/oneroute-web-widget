@@ -255,7 +255,7 @@ function App(props) {
         let response = await fetch(
           `${baseURL}api/conversations/${
             conversationIdRef.current
-          }/messages?page[size]=${PAGE_SIZE}${
+          }/widget-messages?page[size]=${PAGE_SIZE}${
             noPaginate ? `` : `&lastMessageAt=${lastRowId}`
           }`
         );
