@@ -7,6 +7,16 @@ import "regenerator-runtime/runtime";
 
 import "./App.css";
 
+const baseURL = "https://api.oneroute.io/";
+
+var socket = io(baseURL, {
+  reconnectionDelay: 1000,
+  reconnection: true,
+  transports: ["websocket"],
+  upgrade: false,
+  forceNew: true,
+});
+
 function App(props) {
   var widget_id = props?.widgetid;
 
@@ -28,9 +38,6 @@ function App(props) {
 
   var { color, logo, headText, subText, toolTip, channels } =
     widgetConfig || {};
-
-  // const baseURL = "https://api.oneroute.io/";
-  const baseURL = "https://api.oneroute.io/";
 
   const PAGE_SIZE = 10;
 
@@ -80,12 +87,6 @@ function App(props) {
 
   // WebSocket.io Script Starts Here
   useEffect(() => {
-    var socket = io(baseURL, {
-      reconnectionDelay: 1000,
-      reconnection: true,
-      transports: ["websocket"],
-    });
-
     var element = document.querySelector(".oneroute_widget");
 
     socket.on("newMessage", (data) => {
@@ -95,6 +96,22 @@ function App(props) {
       ) {
         element.setAttribute("data-newmessage", "true");
       }
+    });
+
+    setInterval(() => {
+      socket.emit("ping-alive", "hello wolrd");
+    }, 58000); // PING SERVER EVERY 58 seconds
+
+    socket.on("disconnect", (reason) => {
+      console.log("REASON:", reason);
+
+      if (reason === "io server disconnect") {
+        socket.connect();
+      }
+    });
+
+    socket.on("error", (error) => {
+      console.log("ERROR:", error);
     });
   }, []);
   // WebSocket.io Script Ends Here
