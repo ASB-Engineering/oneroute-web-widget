@@ -90,6 +90,7 @@ function App(props) {
     var element = document.querySelector(".oneroute_widget");
 
     socket.on("newMessage", (data) => {
+      console.log(".");
       if (
         data?.conversation?.id === localStorage.getItem("conversationId") &&
         data?.message?.sender?.authUser !== false
