@@ -144,6 +144,7 @@ function App(props) {
 
     if (isLiveChatOpen && chatMessagesEl) {
       chatMessagesEl.addEventListener("scroll", loadMoreChats);
+      getConvoMessages(false, true);
 
       triggerScrollToBottom(true);
       const timer = setInterval(() => {
@@ -463,6 +464,9 @@ function App(props) {
     }
   };
 
+  const islastMsgFromMe =
+    convoMessages?.current[convoMessages?.current?.length - 1]?.id === "new";
+
   return (
     <>
       {showWidget ? (
@@ -570,7 +574,7 @@ function App(props) {
                           {isSubmitting === true && (
                             <p className="send_status">Sending...</p>
                           )}
-                          {isSubmitting === false && (
+                          {isSubmitting === false && islastMsgFromMe && (
                             <p className="send_status">Sent</p>
                           )}
                           {isLoadingMessages === true && (
