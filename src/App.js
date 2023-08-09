@@ -275,6 +275,10 @@ function App(props) {
 
     const lastRowId = convoMessages.current?.[0]?.row_id;
 
+    console.log(
+      !isLastPageOfMessages.current,
+      "!isLastPageOfMessages.current..."
+    );
     if (!isLastPageOfMessages.current) {
       try {
         let response = await fetch(
@@ -294,7 +298,10 @@ function App(props) {
           convoMessages.current = data;
           setConvos(data);
 
-          isLastPageOfMessages.current = res?.data?.length < 10 ? true : false;
+          isLastPageOfMessages.current =
+            convoMessages.current?.length > 9 && res?.data?.length < 10
+              ? true
+              : false;
 
           load && setIsLoadingMessages(false);
           load && setIsSubmitting(null);
