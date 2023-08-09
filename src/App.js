@@ -99,8 +99,7 @@ function App(props) {
       console.log("dataUserAuth: ", dataAuthUser);
 
       if (dataCustomerId === customerIdRef?.current && dataAuthUser === true) {
-        console.log("I fetched...");
-        console.log("--- --- --- --- --- ---");
+        console.log("Check passed...");
         getConvoMessages(false, true);
       } else {
         console.log("--- --- --- --- --- ---");
@@ -268,6 +267,8 @@ function App(props) {
   };
 
   const getConvoMessages = async (load, noPaginate) => {
+    console.log("I'm fetching...");
+    console.log("--- --- --- --- --- ---");
     load && setIsLoadingMessages(true);
 
     const lastRowId = convoMessages.current?.[0]?.row_id;
