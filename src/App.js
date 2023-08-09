@@ -87,15 +87,22 @@ function App(props) {
 
   // WebSocket.io Script Starts Here
   useEffect(() => {
-    var element = document.querySelector(".oneroute_widget");
-
     socket.on("newMessage", (data) => {
-      console.log(".");
+      console.log(
+        "Is convo mine? ",
+        data?.conversation?.id === localStorage.getItem("conversationId")
+      );
+      console.log(
+        "Is sender authed? ",
+        data?.message?.sender?.authUser === true
+      );
+      console.log(data, "sock... data");
       if (
         data?.conversation?.id === localStorage.getItem("conversationId") &&
-        data?.message?.sender?.authUser !== false
+        data?.message?.sender?.authUser === true
       ) {
-        element.setAttribute("data-newmessage", "true");
+        console.log("Fetch triggered...");
+        getConvoMessages(false, true);
       }
     });
 
@@ -114,24 +121,9 @@ function App(props) {
     socket.on("error", (error) => {
       console.log("ERROR:", error);
     });
-  }, []);
-  // WebSocket.io Script Ends Here
-
-  var widgetElement = document.querySelector(".oneroute_widget");
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      var widgetValue = widgetElement.getAttribute("data-newmessage");
-      if (widgetValue === "true") {
-        getConvoMessages(false, true);
-      }
-    }, 1000);
-
-    // clearing interval
-    return () => clearInterval(timer);
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+  // WebSocket.io Script Ends Here
 
   useEffect(() => {
     if (!isWidgetOpen) {
@@ -269,7 +261,6 @@ function App(props) {
   };
 
   const getConvoMessages = async (load, noPaginate) => {
-    widgetElement.setAttribute("data-newmessage", "false");
     load && setIsLoadingMessages(true);
 
     const lastRowId = convoMessages.current?.[0]?.row_id;
