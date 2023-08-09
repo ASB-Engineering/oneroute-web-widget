@@ -88,20 +88,11 @@ function App(props) {
   // WebSocket.io Script Starts Here
   useEffect(() => {
     socket.on("newMessage", (data) => {
-      console.log(
-        "Is convo mine? ",
-        data?.conversation?.id === localStorage.getItem("conversationId")
-      );
-      console.log(
-        "Is sender authed? ",
-        data?.message?.sender?.authUser === true
-      );
-      console.log(data, "sock... data");
+      console.log(".");
       if (
         data?.conversation?.id === localStorage.getItem("conversationId") &&
         data?.message?.sender?.authUser === true
       ) {
-        console.log("Fetch triggered...");
         getConvoMessages(false, true);
       }
     });
