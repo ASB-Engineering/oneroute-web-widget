@@ -49,7 +49,7 @@ function App(props) {
     localStorage.getItem("conversationId") || null
   );
 
-  // const customerIdRef = useRef(localStorage.getItem("customerId") || null);
+  const customerIdRef = useRef(localStorage.getItem("customerId") || null);
 
   const isLastPageOfMessages = useRef(false);
 
@@ -91,10 +91,11 @@ function App(props) {
   useEffect(() => {
     socket.on("newMessage", (data) => {
       console.log(".");
-      if (
-        data?.conversation?.id === localStorage.getItem("conversationId") &&
-        data?.message?.sender?.authUser === true
-      ) {
+
+      const dataCustomerId = data?.conversation?.customer_id;
+      const dataAuthUser = data?.message?.sender?.authUser;
+
+      if (dataCustomerId === customerIdRef?.current && dataAuthUser === true) {
         getConvoMessages(false, true);
       }
     });
@@ -243,8 +244,13 @@ function App(props) {
         });
 
         getConvoMessages(true, true);
+
+        if (!customerIdRef.current || customerIdRef.current === undefined) {
+          localStorage.setItem("customerId", res?.data?.Customer?.id);
+        }
       } else {
         localStorage.removeItem("conversationId");
+        localStorage.removeItem("customerId");
       }
     } catch (err) {
       setIsSignUpFormOpen(true);
@@ -341,7 +347,7 @@ function App(props) {
           });
           conversationIdRef.current = res?.data?.conversation_id;
           localStorage.setItem("conversationId", res?.data?.conversation_id);
-          // localStorage.setItem("customerId", res?.data?.customer_id);
+          localStorage.setItem("customerId", res?.data?.sender?.customer_id);
           getConvoMessages(false, true);
 
           setConvoData(res?.data);
