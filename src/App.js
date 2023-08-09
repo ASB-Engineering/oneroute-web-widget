@@ -92,11 +92,13 @@ function App(props) {
     socket.on("newMessage", (data) => {
       const dataCustomerId = data?.conversation?.customer_id;
       const dataAuthUser = data?.message?.sender?.authUser;
+      const dataMsgContent = data?.message?.content;
 
       console.log(".");
       console.log("dataCustomerId: ", dataCustomerId);
       console.log("myCustomerId: ", customerIdRef?.current);
       console.log("dataUserAuth: ", dataAuthUser);
+      console.log("dataMsgContent: ", dataMsgContent);
 
       if (dataCustomerId === customerIdRef?.current && dataAuthUser === true) {
         console.log("Check passed...");
