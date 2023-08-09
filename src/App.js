@@ -90,21 +90,13 @@ function App(props) {
   // WebSocket.io Script Starts Here
   useEffect(() => {
     socket.on("newMessage", (data) => {
+      console.log(".");
+
       const dataCustomerId = data?.conversation?.customer_id;
       const dataAuthUser = data?.message?.sender?.authUser;
-      const dataMsgContent = data?.message?.content;
-
-      console.log(".");
-      console.log("dataCustomerId: ", dataCustomerId);
-      console.log("myCustomerId: ", customerIdRef?.current);
-      console.log("dataUserAuth: ", dataAuthUser);
-      console.log("dataMsgContent: ", dataMsgContent);
 
       if (dataCustomerId === customerIdRef?.current && dataAuthUser === true) {
-        console.log("Check passed...");
         getConvoMessages(false, true);
-      } else {
-        console.log("--- --- --- --- --- ---");
       }
     });
 
@@ -269,16 +261,10 @@ function App(props) {
   };
 
   const getConvoMessages = async (load, noPaginate) => {
-    console.log("I'm fetching...");
-    console.log("--- --- --- --- --- ---");
     load && setIsLoadingMessages(true);
 
     const lastRowId = convoMessages.current?.[0]?.row_id;
 
-    console.log(
-      !isLastPageOfMessages.current,
-      "!isLastPageOfMessages.current..."
-    );
     if (!isLastPageOfMessages.current) {
       try {
         let response = await fetch(
