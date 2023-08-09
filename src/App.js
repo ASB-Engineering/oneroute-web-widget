@@ -90,13 +90,20 @@ function App(props) {
   // WebSocket.io Script Starts Here
   useEffect(() => {
     socket.on("newMessage", (data) => {
-      console.log(".");
-
       const dataCustomerId = data?.conversation?.customer_id;
       const dataAuthUser = data?.message?.sender?.authUser;
 
+      console.log(".");
+      console.log("dataCustomerId: ", dataCustomerId);
+      console.log("myCustomerId: ", customerIdRef?.current);
+      console.log("dataUserAuth: ", dataAuthUser);
+
       if (dataCustomerId === customerIdRef?.current && dataAuthUser === true) {
+        console.log("I fetched...");
+        console.log("--- --- --- --- --- ---");
         getConvoMessages(false, true);
+      } else {
+        console.log("--- --- --- --- --- ---");
       }
     });
 
