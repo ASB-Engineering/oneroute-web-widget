@@ -246,6 +246,7 @@ function App(props) {
         getConvoMessages(true, true);
 
         if (!customerIdRef.current || customerIdRef.current === undefined) {
+          customerIdRef.current = res?.data?.Customer?.id;
           localStorage.setItem("customerId", res?.data?.Customer?.id);
         }
       } else {
@@ -347,6 +348,7 @@ function App(props) {
           });
           conversationIdRef.current = res?.data?.conversation_id;
           localStorage.setItem("conversationId", res?.data?.conversation_id);
+          customerIdRef.current = res?.data?.sender?.customer_id;
           localStorage.setItem("customerId", res?.data?.sender?.customer_id);
           getConvoMessages(false, true);
 
