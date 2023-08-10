@@ -89,7 +89,7 @@ function App(props) {
 
   // WebSocket.io Script Starts Here
   useEffect(() => {
-    socket.on("newMessage", (data) => {
+    socket.on("newWidgetMessage", (data) => {
       console.log(".");
 
       const dataCustomerId = data?.conversation?.customer_id;
@@ -485,6 +485,16 @@ function App(props) {
     }
   };
 
+  const showPoweredBy = () => {
+    const name = widgetConfig?.Firm?.Plan?.name;
+
+    if (name === "enterprise" || name === "business") {
+      return false;
+    }
+
+    return true;
+  };
+
   const islastMsgFromMe =
     convoMessages?.current[convoMessages?.current?.length - 1]?.id === "new";
 
@@ -666,22 +676,24 @@ function App(props) {
                         </div>
                       </>
                     )}
-                    <div className="footer">
-                      <img
-                        src="https://s3.eu-west-3.amazonaws.com/oneroute.asb.ng/oneroute.svg"
-                        alt=""
-                      />{" "}
-                      <span>
-                        Powered by{" "}
-                        <a
-                          href="https://oneroute.io"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          OneRoute
-                        </a>
-                      </span>
-                    </div>
+                    {showPoweredBy() && (
+                      <div className="footer">
+                        <img
+                          src="https://s3.eu-west-3.amazonaws.com/oneroute.asb.ng/oneroute.svg"
+                          alt=""
+                        />{" "}
+                        <span>
+                          Powered by{" "}
+                          <a
+                            href="https://oneroute.io"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            OneRoute
+                          </a>
+                        </span>
+                      </div>
+                    )}
                   </div>
                 </>
               ) : (
@@ -733,22 +745,24 @@ function App(props) {
                       ))}
                     </div>
 
-                    <div className="footer">
-                      <img
-                        src="https://s3.eu-west-3.amazonaws.com/oneroute.asb.ng/oneroute.svg"
-                        alt=""
-                      />{" "}
-                      <span>
-                        Powered by{" "}
-                        <a
-                          href="https://oneroute.io"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          OneRoute
-                        </a>
-                      </span>
-                    </div>
+                    {showPoweredBy() && (
+                      <div className="footer">
+                        <img
+                          src="https://s3.eu-west-3.amazonaws.com/oneroute.asb.ng/oneroute.svg"
+                          alt=""
+                        />{" "}
+                        <span>
+                          Powered by{" "}
+                          <a
+                            href="https://oneroute.io"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            OneRoute
+                          </a>
+                        </span>
+                      </div>
+                    )}
                   </div>
                 </>
               )}

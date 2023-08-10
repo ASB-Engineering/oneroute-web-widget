@@ -259,6 +259,10 @@ button {
   cursor: not-allowed;
 }
 
+.oneroute_widget .chat_container {
+  padding-bottom: 1px;
+}
+
 .oneroute_widget .chat_messages {
   padding: 30px 12px 0px 12px;
   height: 230px;
