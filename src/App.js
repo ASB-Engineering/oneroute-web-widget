@@ -96,7 +96,13 @@ function App(props) {
       const dataAuthUser = data?.message?.sender?.authUser;
 
       if (dataCustomerId === customerIdRef?.current && dataAuthUser === true) {
-        getConvoMessages(false, true);
+        updateConvoMessages({
+          id: "incoming",
+          sender: data?.message?.sender,
+          imageUrl: data?.message?.imageUrl,
+          content: data?.message?.content,
+          updatedAt: data?.conversation?.lastMessageAt,
+        });
       }
     });
 
@@ -303,6 +309,16 @@ function App(props) {
     }
   };
 
+  const updateConvoMessages = (msg) => {
+    triggerScrollToBottom(true);
+    const data = [...(convoMessages.current || []), msg];
+    convoMessages.current = data;
+    setConvos(data);
+
+    triggerScrollToBottom(true);
+    triggerScrollToBottom(false);
+  };
+
   const loadMoreChats = () => {
     const scrollTop = chatContentRef.current?.scrollTop;
 
@@ -447,6 +463,12 @@ function App(props) {
             ...formData,
             message: { text: "" },
           });
+
+          if (conversationIdRef.current !== res?.data?.conversation_id) {
+            conversationIdRef.current = res?.data?.conversation_id;
+            localStorage.setItem("conversationId", res?.data?.conversation_id);
+          }
+
           setIsSubmitting(false);
         }
       } catch (err) {
