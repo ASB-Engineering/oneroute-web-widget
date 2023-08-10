@@ -123,6 +123,7 @@ button {
 
 .oneroute_widget .bottom_section .channels {
   margin-top: -24px;
+  min-height: 150px;
 }
 
 .oneroute_widget .bottom_section .channels .item {
