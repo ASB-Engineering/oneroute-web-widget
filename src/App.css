@@ -345,6 +345,25 @@ button {
   line-break: anywhere;
 }
 
+.oneroute_widget .chat_messages .message .content .reply_options {
+  margin-top: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.oneroute_widget .chat_messages .message .content .reply_options p {
+  margin: 0;
+  padding: 7px 10px;
+  font-weight: 600;
+  font-size: 12.5px;
+  text-align: center;
+  color: #474f58;
+  border: 1px solid rgba(71, 79, 88, 0.7);
+  border-radius: 5px;
+  cursor: pointer;
+}
+
 .oneroute_widget .chat_messages .message .content p {
   margin: 0;
   margin-top: 7px;

@@ -7,6 +7,7 @@ import "regenerator-runtime/runtime";
 
 import "./App.css";
 
+// const baseURL = "https://api.staging.oneroute.io/";
 const baseURL = "https://api.oneroute.io/";
 
 var socket = io(baseURL, {
@@ -220,6 +221,24 @@ function App(props) {
 
     if (errorMsg) setErrorMsg(null);
   };
+
+  const handleReplyWithBtn = (text) => {
+    setFormData({
+      ...formData,
+      message: {
+        text,
+        type: "btn",
+      },
+    });
+
+    if (errorMsg) setErrorMsg(null);
+  };
+  useEffect(() => {
+    if (formData?.message?.type) {
+      replyConversation();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formData?.message?.type]);
 
   const ScrollToBottom = () => {
     const elementRef = useRef();
@@ -595,6 +614,22 @@ function App(props) {
                                   <img src={msg?.imageUrl} alt="" />
                                 )}
                                 <h6>{msg?.content}</h6>
+
+                                {msg?.replyOptions?.length > 0 && (
+                                  <div className="reply_options">
+                                    {msg?.replyOptions?.map((item, i) => (
+                                      <p
+                                        key={i}
+                                        onClick={() =>
+                                          handleReplyWithBtn(item?.value)
+                                        }
+                                      >
+                                        {item?.text}
+                                      </p>
+                                    ))}
+                                  </div>
+                                )}
+
                                 <p>{formatTime(msg?.updatedAt)}</p>
                               </div>
                             </div>
