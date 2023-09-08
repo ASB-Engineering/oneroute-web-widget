@@ -7,8 +7,8 @@ import "regenerator-runtime/runtime";
 
 import "./App.css";
 
-// const baseURL = "https://api.staging.oneroute.io/";
-const baseURL = "https://api.oneroute.io/";
+const baseURL = "https://api.staging.oneroute.io/";
+// const baseURL = "https://api.oneroute.io/";
 
 var socket = io(baseURL, {
   reconnectionDelay: 1000,
@@ -621,7 +621,7 @@ function App(props) {
                                       <p
                                         key={i}
                                         onClick={() =>
-                                          handleReplyWithBtn(item?.value)
+                                          handleReplyWithBtn(item?.text)
                                         }
                                       >
                                         {item?.text}
