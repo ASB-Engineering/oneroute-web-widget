@@ -343,6 +343,7 @@ button {
   line-height: 150%;
   color: #474f58;
   line-break: anywhere;
+  white-space: pre-line;
 }
 
 .oneroute_widget .chat_messages .message .content .reply_options {
