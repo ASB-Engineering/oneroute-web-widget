@@ -342,8 +342,8 @@ button {
   font-size: 13.5px;
   line-height: 150%;
   color: #474f58;
-  line-break: anywhere;
   white-space: pre-line;
+  word-wrap: break-word;
 }
 
 .oneroute_widget .chat_messages .message .content .reply_options {
@@ -358,7 +358,7 @@ button {
   padding: 7px 10px;
   font-weight: 600;
   font-size: 12.5px;
-  text-align: center;
+  text-align: left;
   color: #474f58;
   border: 1px solid rgba(71, 79, 88, 0.7);
   border-radius: 5px;

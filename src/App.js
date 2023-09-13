@@ -443,6 +443,30 @@ function App(props) {
     }
   };
 
+  const textReplacer = (matched) => {
+    let withProtocol = matched;
+
+    if (!withProtocol.startsWith("http")) {
+      withProtocol = "http://" + matched;
+    }
+
+    const newStr = `<a class="text-link" href="${withProtocol}" target="_blank">${matched}</a>`;
+
+    return newStr;
+  };
+
+  const getMessageContent = (message) => {
+    var content = "";
+    content = message;
+
+    // eslint-disable-next-line no-useless-escape
+    const linkRegex = /(https?\:\/\/)?(www\.)?[^\s]+\.[^\s]+/g;
+
+    const modifiedStr = content?.replace(linkRegex, textReplacer);
+
+    return modifiedStr;
+  };
+
   const replyConversation = async () => {
     if (formData?.message?.text?.length > 0) {
       convoMessages.current = [
@@ -458,15 +482,21 @@ function App(props) {
       triggerScrollToBottom(true);
 
       try {
+        const payload = {
+          email: formData?.email,
+          name: formData?.name,
+          message: formData?.message,
+        };
+        setFormData({
+          ...formData,
+          message: { text: "" },
+        });
+
         let response = await fetch(
           `${baseURL}api/conversations/incoming-messages/widget/${liveChatCredentials?.to}`,
           {
             method: "POST",
-            body: JSON.stringify({
-              email: formData?.email,
-              name: formData?.name,
-              message: formData?.message,
-            }),
+            body: JSON.stringify(payload),
             headers: {
               "Content-type": "application/json; charset=UTF-8",
             },
@@ -476,17 +506,17 @@ function App(props) {
 
         const success = res?.success;
         if (success === true) {
-          setFormData({
-            ...formData,
-            message: { text: "" },
-          });
-
           if (conversationIdRef.current !== res?.data?.conversation_id) {
             conversationIdRef.current = res?.data?.conversation_id;
             localStorage.setItem("conversationId", res?.data?.conversation_id);
           }
 
           setIsSubmitting(false);
+        } else {
+          setFormData({
+            ...formData,
+            message: payload?.message,
+          });
         }
       } catch (err) {
         const filteredMessage = convoMessages.current?.filter(
@@ -499,6 +529,17 @@ function App(props) {
       }
 
       triggerScrollToBottom(false);
+    }
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter" && e.shiftKey) return;
+
+    if (window.innerWidth > 400) {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        replyConversation();
+      }
     }
   };
 
@@ -611,7 +652,11 @@ function App(props) {
                                 {msg?.imageUrl && (
                                   <img src={msg?.imageUrl} alt="" />
                                 )}
-                                <h6>{msg?.content}</h6>
+                                <h6
+                                  dangerouslySetInnerHTML={{
+                                    __html: getMessageContent(msg?.content),
+                                  }}
+                                ></h6>
 
                                 {msg?.replyOptions?.length > 0 && (
                                   <div className="reply_options">
@@ -655,6 +700,7 @@ function App(props) {
                             placeholder="Type a message here..."
                             value={formData?.message?.text}
                             onChange={handleMessageChange}
+                            onKeyDown={handleKeyDown}
                           />
                           {formData?.message?.attachment && (
                             <div className="file_container">
