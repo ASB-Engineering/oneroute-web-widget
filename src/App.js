@@ -735,7 +735,6 @@ function App(props) {
                     className="top_section"
                     style={{
                       backgroundColor: color,
-                      color: determineColorFromBg(),
                     }}
                   >
                     <div
@@ -748,8 +747,20 @@ function App(props) {
                       />
                     </div>
                     <img className="logo" src={logo} alt="" />
-                    <h3>{headText}</h3>
-                    <h4>{subText}</h4>
+                    <h3
+                      style={{
+                        color: determineColorFromBg(),
+                      }}
+                    >
+                      {headText}
+                    </h3>
+                    <h4
+                      style={{
+                        color: determineColorFromBg(),
+                      }}
+                    >
+                      {subText}
+                    </h4>
                   </div>
                   <div className="bottom_section">
                     <div className="channels">
