@@ -99,10 +99,8 @@ function App(props) {
       if (dataCustomerId === customerIdRef?.current && dataAuthUser === true) {
         updateConvoMessages({
           id: "incoming",
-          sender: data?.message?.sender,
-          imageUrl: data?.message?.imageUrl,
-          content: data?.message?.content,
           updatedAt: data?.conversation?.lastMessageAt,
+          ...data?.message,
         });
       }
     });
